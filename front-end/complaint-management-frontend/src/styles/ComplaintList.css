@@ -1,0 +1,46 @@
+/* ComplaintList.css */
+ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    background-color: #fff;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  h3 {
+    margin: 0;
+    color: #333;
+  }
+  
+  p {
+    color: #555;
+  }
+  
+  button {
+    background-color: #ff5733; /* Default button color */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin-right: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #e94e24;
+  }
+  
+  /* Specific style for delete button */
+  .delete-button {
+    background-color: #f44336; /* Red color */
+  }
+  
+  .delete-button:hover {
+    background-color: #d32f2f; /* Darker red on hover */
+  }
+  

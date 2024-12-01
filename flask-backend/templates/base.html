@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaints Management</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/static/css/blog.css">
+    <script>
+        // Function to fetch complaints from API
+        function createComplaint() {
+            const title = $("#title").val();
+            const description = $("#description").val();
+            const author = $("#author").val();
+
+            $.ajax({
+                url: "/api/complaints",
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ title: title, description: description, author: author }),
+                success: function(response) {
+                    alert("Complaint created successfully!");
+                    window.location.href = "/complaints-list"; // Redirect to complaints list page
+                },
+                error: function(response) {
+                    alert("Error creating complaint: " + response.responseJSON.error);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            $("#create-complaint-form").submit(function(event) {
+                event.preventDefault();
+                createComplaint();
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Complaints Management</h1>
+
+    <h2>Create a New Complaint</h2>
+    <form id="create-complaint-form">
+        <label for="title">Title:</label><br>
+        <input type="text" id="title" required><br><br>
+        <label for="description">Description:</label><br>
+        <textarea id="description" required></textarea><br><br>
+        <label for="author">Author:</label><br>
+        <input type="text" id="author" required><br><br>
+        <button type="submit">Submit Complaint</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaints List</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/blog.css') }}">
+</head>
+<body>
+    <h1>Complaints List</h1>
+    <ul id="complaints-list">
+        {% for complaint in complaints %}
+            <li id="complaint-{{ complaint.id }}">
+                <div class="complaint-text">
+                    <strong>{{ complaint.title }}</strong><br>
+                    {{ complaint.description }}<br>
+                    <em>By: {{ complaint.author }}</em>
+                </div>
+                
+                <!-- Icons for edit, delete, and add -->
+                <div class="complaint-actions">
+                    <!-- Edit Icon -->
+                    <img src="{{ url_for('static', filename='icons/pencil-fill.svg') }}" alt="Edit" class="action-icon" title="Edit" onclick="editComplaint({{ complaint.id }})">
+                    
+                    <!-- Delete Icon -->
+                    <img src="{{ url_for('static', filename='icons/trash-fill.svg') }}" alt="Delete" class="action-icon" title="Delete" onclick="deleteComplaint({{ complaint.id }})">
+                    
+                    <!-- Add Icon (for creating new complaints) -->
+                    <img src="{{ url_for('static', filename='icons/plus-lg.svg') }}" alt="Add New" class="action-icon" title="Add New Complaint" onclick="window.location.href='/create-complaint'">
+                    
+                    <!-- File Icon -->
+                    <!-- You can add a file icon here if needed -->
+                </div>
+            </li>
+        {% else %}
+            <li>No complaints found.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="/">Go back to create complaint</a>
+
+    <script>
+        // Edit Complaint - Redirect to the edit page
+        function editComplaint(complaintId) {
+            window.location.href = "/edit-complaint/" + complaintId;
+        }
+
+        // Delete Complaint - Send DELETE request to Flask API
+        function deleteComplaint(complaintId) {
+            if (confirm("Are you sure you want to delete this complaint?")) {
+                $.ajax({
+                    url: '/api/complaints/' + complaintId,
+                    type: 'DELETE',
+                    success: function(response) {
+                        // Remove the complaint from the list in the UI
+                        $('#complaint-' + complaintId).remove();
+                        alert("Complaint deleted successfully!");
+                    },
+                    error: function(xhr, status, error) {
+                        alert("An error occurred while deleting the complaint.");
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
