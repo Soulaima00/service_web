@@ -1,5 +1,3 @@
-// api.js
-
 import axios from 'axios';
 
 const apiUrl = 'http://localhost:5000/api/complaints';  // Adjust with your Flask backend URL
@@ -58,7 +56,7 @@ export const deleteComplaint = async (id) => {
 export const getComments = async (complaintId) => {
   try {
     const response = await axios.get(`${apiUrl}/${complaintId}/comments`);
-    return response.data;
+    return response.data || [];  // Ensure it returns an empty array if no comments
   } catch (error) {
     console.error("Error fetching comments", error);
   }

@@ -23,7 +23,7 @@ class Complaint(db.Model):
     description = db.Column(db.String(255), nullable=False)
     author = db.Column(db.String(100), nullable=False)
 
-    def __repr__(self):
+    def _repr_(self):
         return f"<Complaint {self.title}>"
 
 # Comment Model
@@ -38,8 +38,16 @@ class Comment(db.Model):
     # Relationship to Complaint
     complaint = db.relationship('Complaint', backref=db.backref('comments', lazy=True))
 
-    def __repr__(self):
+    def _repr_(self):
         return f"<Comment {self.text[:20]}>"
+
+
+
+with app.app_context():
+    db.create_all()
+
+
+    
 
 # Complaint Routes
 @app.route('/api/complaints', methods=['POST'])

@@ -1,4 +1,3 @@
-// CommentList.js
 import React, { useEffect, useState } from 'react';
 import { getComments, createComment, updateComment, deleteComment } from '../api';  // Adjust imports
 import axios from 'axios';
@@ -12,8 +11,14 @@ const CommentList = ({ complaintId }) => {
   // Fetch comments when component mounts or complaintId changes
   useEffect(() => {
     const fetchComments = async () => {
-      const data = await getComments(complaintId);
-      setComments(data);
+      try {
+        const data = await getComments(complaintId);
+        // Ensure comments is always an array
+        setComments(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching comments", error);
+        setComments([]);  // Default to empty array if error occurs
+      }
     };
 
     fetchComments();
@@ -22,13 +27,15 @@ const CommentList = ({ complaintId }) => {
   // Handle comment submission
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-    if (!newComment) return;
+    
+    // Ensure new comment is not empty or just whitespace
+    if (!newComment.trim()) return;
 
-    const commentData = { content: newComment };
+    const commentData = { content: newComment };  // Ensure the content field is properly filled
     try {
       const response = await createComment(complaintId, commentData);
-      setComments([...comments, response]);  // Append new comment
-      setNewComment('');  // Reset input
+      setComments((prevComments) => [...prevComments, response]);  // Append new comment
+      setNewComment('');  // Reset input after submission
     } catch (error) {
       console.error("Error creating comment", error);
     }
@@ -37,11 +44,13 @@ const CommentList = ({ complaintId }) => {
   // Handle comment edit submission
   const handleCommentEdit = async (e) => {
     e.preventDefault();
-    if (!updatedComment) return;
+
+    // Ensure updated comment is not empty or just whitespace
+    if (!updatedComment.trim()) return;
 
     try {
       const response = await updateComment(complaintId, editingComment.id, { content: updatedComment });
-      const updatedComments = comments.map(comment => 
+      const updatedComments = comments.map((comment) => 
         comment.id === editingComment.id ? response : comment
       );
       setComments(updatedComments);
@@ -58,7 +67,7 @@ const CommentList = ({ complaintId }) => {
     if (isConfirmed) {
       try {
         await deleteComment(complaintId, commentId);
-        setComments(comments.filter(comment => comment.id !== commentId));
+        setComments(comments.filter((comment) => comment.id !== commentId));
       } catch (error) {
         console.error("Error deleting comment", error);
       }
@@ -72,14 +81,17 @@ const CommentList = ({ complaintId }) => {
         <p>No comments yet.</p>
       ) : (
         <ul>
-          {comments.map((comment) => (
-            <li key={comment.id}>
-              <p>{comment.content}</p>
-              <small>{new Date(comment.created_at).toLocaleString()}</small>
-              <button onClick={() => { setEditingComment(comment); setUpdatedComment(comment.content); }}>Edit</button>
-              <button onClick={() => handleCommentDelete(comment.id)}>Delete</button>
-            </li>
-          ))}
+          {comments.map((comment) => {
+            if (!comment || !comment.content) return null; // Guard against invalid data
+            return (
+              <li key={comment.id}>
+                <p>{comment.content}</p>
+                <small>{new Date(comment.created_at).toLocaleString()}</small>
+                <button onClick={() => { setEditingComment(comment); setUpdatedComment(comment.content); }}>Edit</button>
+                <button onClick={() => handleCommentDelete(comment.id)}>Delete</button>
+              </li>
+            );
+          })}
         </ul>
       )}
 
