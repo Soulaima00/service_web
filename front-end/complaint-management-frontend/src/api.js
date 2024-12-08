@@ -56,7 +56,7 @@ export const deleteComplaint = async (id) => {
 export const getComments = async (complaintId) => {
   try {
     const response = await axios.get(`${apiUrl}/${complaintId}/comments`);
-    return response.data || [];  // Ensure it returns an empty array if no comments
+    return response.data || [];  // Ensure empty array is returned if no comments
   } catch (error) {
     console.error("Error fetching comments", error);
   }
@@ -72,20 +72,20 @@ export const createComment = async (complaintId, commentData) => {
   }
 };
 
-// Update a comment for a complaint
-export const updateComment = async (complaintId, commentId, commentData) => {
+// Update a comment (using comment's ID)
+export const updateComment = async (commentId, commentData) => {
   try {
-    const response = await axios.put(`${apiUrl}/${complaintId}/comments/${commentId}`, commentData);
+    const response = await axios.put(`http://localhost:5000/api/comments/${commentId}`, commentData);  // Correct route to update a comment
     return response.data;
   } catch (error) {
     console.error("Error updating comment", error);
   }
 };
 
-// Delete a comment for a complaint
-export const deleteComment = async (complaintId, commentId) => {
+// Delete a comment (using comment's ID)
+export const deleteComment = async (commentId) => {
   try {
-    const response = await axios.delete(`${apiUrl}/${complaintId}/comments/${commentId}`);
+    const response = await axios.delete(`http://localhost:5000/api/comments/${commentId}`);  // Correct route to delete a comment
     return response.data;
   } catch (error) {
     console.error("Error deleting comment", error);

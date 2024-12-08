@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { getComplaints, deleteComplaint } from '../api';  // Assuming you have an API file for Axios calls
-import { useNavigate } from 'react-router-dom'; // useNavigate for React Router v6
-import '../styles/ComplaintList.css';  // Correct path to the CSS file
-import CommentList from './CommentList';  // Import CommentList component
+import { getComplaints, deleteComplaint } from '../api';  // API calls
+import { useNavigate } from 'react-router-dom';
+import '../styles/ComplaintList.css';
+import CommentList from './CommentList';  // Import CommentList
 
 const ComplaintList = () => {
   const [complaints, setComplaints] = useState([]);
-  const navigate = useNavigate(); // useNavigate hook
+  const navigate = useNavigate();
 
-  // Fetch complaints from the API
   useEffect(() => {
     const fetchComplaints = async () => {
       const data = await getComplaints();
@@ -17,34 +16,38 @@ const ComplaintList = () => {
     fetchComplaints();
   }, []);
 
-  // Delete complaint handler
   const handleDelete = async (id) => {
     const isConfirmed = window.confirm('Are you sure you want to delete this complaint?');
     if (isConfirmed) {
-      await deleteComplaint(id); // Proceed with deletion if confirmed
-      setComplaints(complaints.filter((complaint) => complaint.id !== id)); // Update complaint list
+      await deleteComplaint(id);
+      setComplaints(complaints.filter((complaint) => complaint.id !== id));
     }
   };
 
-  // Edit complaint handler
   const handleEdit = (id) => {
-    navigate(`/edit-complaint/${id}`); // use navigate instead of history.push
+    navigate(`/edit-complaint/${id}`);
   };
 
   return (
-    <div>
+    <div className="complaint-list">
       <h2>Complaints</h2>
       <ul>
         {complaints.map((complaint) => (
-          <li key={complaint.id}>
-            <h3>{complaint.title}</h3>
+          <li key={complaint.id} className="complaint-item">
+            <div className="complaint-header">
+              <h3>{complaint.title}</h3>
+              <div className="complaint-buttons">
+                <button onClick={() => handleEdit(complaint.id)}>Edit</button>
+                <button className="delete-button" onClick={() => handleDelete(complaint.id)}>Delete</button>
+              </div>
+            </div>
             <p>{complaint.description}</p>
             <p>By: {complaint.author}</p>
-            <button onClick={() => handleEdit(complaint.id)}>Edit</button>
-            <button className="delete-button" onClick={() => handleDelete(complaint.id)}>Delete</button>
 
-            {/* Render CommentList under each complaint */}
-            <CommentList complaintId={complaint.id} />
+            {/* Comments Section */}
+            <div className="comments-section">
+              <CommentList complaintId={complaint.id} />
+            </div>
           </li>
         ))}
       </ul>
